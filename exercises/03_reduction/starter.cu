@@ -8,8 +8,20 @@ __global__ void vector_sum_shared(
     int i = blockIdx.x * blockDim.x + t;
 
     // TODO: load a[i] or zero into s[t], then synchronize
+    s[t] = (i < n) ? a[i] : 0.0f;
+    __syncthreads();
+
     // TODO: reduce from blockDim.x / 2, all threads must reach each barrier
+    for (int stride = blockDim.x / 2; stride > 0; stride /= 2) {
+        if (t < stride) {
+            s[t] += s[t + stride];
+        }
+        __syncthreads();
+    }
     // TODO: thread 0 atomically adds the block sum to the output
+    if (t == 0) {
+        atomicAdd(out, s[0]);
+    }
 }
 
 int main(int argc, char** argv) {
