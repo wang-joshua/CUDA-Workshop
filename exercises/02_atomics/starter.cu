@@ -4,6 +4,9 @@
 __global__ void vector_sum_atomic(const float* a, float* sum, int n) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     // TODO: atomically add the corresponding element in a to sum
+    if (i < n) {
+        atomicAdd(sum, a[i]);
+    }
 }
 
 int main(int argc, char** argv) {
@@ -24,6 +27,8 @@ int main(int argc, char** argv) {
         int blocks = (n + threads - 1) / threads;
         // TODO: initialize d_sum to zero, call vector_sum_atomic
         // ...
+        ind d_sum = 0;
+        vector_sum_atomic<<<blocks, threads>>>(d_a, d_sum, n);
 
         CUDA_CHECK(cudaGetLastError());
         CUDA_CHECK(cudaDeviceSynchronize());
