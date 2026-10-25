@@ -3,9 +3,9 @@
 
 __global__ void vector_add(const float* a, const float* b, float* c, int n) {
     // TODO: compute the index, check bounds, and add the elements
-    int i = blockIdx.x * blockDim.x + threadIdx.x
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i < n) {
-        c[i] = a[i] +b[i]
+        c[i] = a[i] +b[i];
     }
 }
 
@@ -33,7 +33,7 @@ int main(int argc, char** argv) {
         int blocks = (n + threads - 1) / threads;
         // launch vector_add
         vector_add<<<blocks, threads>>>(d_a, d_b, d_c, n);
-        
+
         CUDA_CHECK(cudaGetLastError());
         CUDA_CHECK(cudaDeviceSynchronize());
         CUDA_CHECK(cudaMemcpy(c.data(), d_c, bytes, cudaMemcpyDeviceToHost));
