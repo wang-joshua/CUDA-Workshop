@@ -29,10 +29,11 @@ int main(int argc, char** argv) {
         CUDA_CHECK(cudaMemset(d_c, 0, bytes));
 
         // TODO: choose threads per block, calculate blocks, and launch vector_add
-        int threads = 0;
-        int blocks = 0;
+        int threads = 256;
+        int blocks = (n + threads - 1) / threads;
         // launch vector_add
-
+        vector_add<<<blocks, threads>>>(d_a, d_b, d_c, n);
+        
         CUDA_CHECK(cudaGetLastError());
         CUDA_CHECK(cudaDeviceSynchronize());
         CUDA_CHECK(cudaMemcpy(c.data(), d_c, bytes, cudaMemcpyDeviceToHost));
