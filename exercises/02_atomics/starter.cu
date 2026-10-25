@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
         int blocks = (n + threads - 1) / threads;
         // TODO: initialize d_sum to zero, call vector_sum_atomic
         // ...
-        ind d_sum = 0;
+        CUDA_CHECK(cudaMemset(d_sum, 0, sizeof(float)));
         vector_sum_atomic<<<blocks, threads>>>(d_a, d_sum, n);
 
         CUDA_CHECK(cudaGetLastError());
